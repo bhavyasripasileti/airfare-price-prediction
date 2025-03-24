@@ -10,7 +10,6 @@ from xgboost import XGBRegressor
 from sklearn.metrics import mean_squared_error, r2_score
 import streamlit as st
 
-# Generate synthetic dataset
 def generate_synthetic_data(n=1000):
     airlines = ['Indigo', 'Air India', 'SpiceJet', 'Vistara', 'GoAir']
     sources = ['Delhi', 'Mumbai', 'Bangalore', 'Chennai', 'Kolkata']
@@ -31,16 +30,13 @@ def generate_synthetic_data(n=1000):
     df = pd.DataFrame(data, columns=['Airline', 'Source', 'Destination', 'Date', 'Stops', 'Price'])
     return df
 
-# Load data
 df = generate_synthetic_data()
 
-# Preprocessing
 df['Date'] = pd.to_datetime(df['Date'])
 df['Day'] = df['Date'].dt.day
 df['Month'] = df['Date'].dt.month
 df.drop(columns=['Date'], inplace=True)
 
-# One-Hot Encoding
 encoder = OneHotEncoder(drop='first', sparse_output=False)
 categorical_features = ['Airline', 'Source', 'Destination']
 categorical_encoded = encoder.fit_transform(df[categorical_features])
@@ -48,16 +44,14 @@ categorical_df = pd.DataFrame(categorical_encoded, columns=encoder.get_feature_n
 
 df = pd.concat([df.drop(columns=categorical_features), categorical_df], axis=1)
 
-# Scaling
 scaler = StandardScaler()
 X = df.drop(columns=['Price'])
 Y = df['Price']
 X_scaled = scaler.fit_transform(X)
 
-# Train-test split
+
 X_train, X_test, Y_train, Y_test = train_test_split(X_scaled, Y, test_size=0.2, random_state=42)
 
-# Model training
 models = {
     'Linear Regression': LinearRegression(),
     'Random Forest': RandomForestRegressor(n_estimators=100, random_state=42),
@@ -67,7 +61,6 @@ models = {
 for name, model in models.items():
     model.fit(X_train, Y_train)
 
-# Function for manual input testing
 def predict_price(airline, source, destination, stops, day, month, model_choice='Random Forest'):
     input_data = pd.DataFrame([[airline, source, destination, stops, day, month]],
                                columns=['Airline', 'Source', 'Destination', 'Stops', 'Day', 'Month'])
@@ -79,10 +72,7 @@ def predict_price(airline, source, destination, stops, day, month, model_choice=
     prediction = models[model_choice].predict(input_scaled)[0]
     return f"Predicted Airfare: ₹{prediction:.2f}"
 
-# Uncomment to test manually
-# print(predict_price('Indigo', 'Delhi', 'Mumbai', 1, 15, 6, 'Random Forest'))
 
-# Deployment with Streamlit
 def run_app():
     st.title("Airfare Price Prediction")
     airline = st.selectbox("Airline", ['Indigo', 'Air India', 'SpiceJet', 'Vistara', 'GoAir'])
@@ -98,5 +88,3 @@ def run_app():
     
     st.write(prediction)
 
-# Uncomment to run Streamlit app
-# run_app()
