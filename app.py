@@ -75,6 +75,7 @@ def predict_price(airline, source, destination, stops, day, month, model_choice=
 
 def run_app():
     st.title("Airfare Price Prediction")
+    st.write("Debug: App loaded successfully")
 
     airline = st.selectbox("Airline", ['Indigo', 'Air India', 'SpiceJet', 'Vistara', 'GoAir'])
     source = st.selectbox("Source", ['Delhi', 'Mumbai', 'Bangalore', 'Chennai', 'Kolkata'])
